@@ -1,378 +1,304 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>The Forge Calculator Pro - Roblox Crafting & Ore Guide</title>
-    
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚔️</text></svg>">
-    
-    <meta name="description" content="Ultimate Roblox The Forge Calculator. Optimize ore combinations, calculate success rates for Abyssal Armor and Godslayer weapons, and maximize your forge purity.">
-    
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Roboto:wght@400;500;700&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>The Forge Calculator Pro</title>
 
-        :root {
-            --bg: #0d0d0d;
-            --card: #1a1a1a;
-            --card-hover: #222;
-            --accent: #ff4d00;
-            --accent-glow: rgba(255, 77, 0, 0.4);
-            --gold: #ffd700;
-            --gold-glow: rgba(255, 215, 0, 0.3);
-            --text: #ffffff;
-            --text-dim: #999;
-            --border: #333;
-            --success: #00ff88;
-            --danger: #ff3366;
-            --shadow: rgba(0, 0, 0, 0.6);
-        }
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚔️</text></svg>">
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Roboto:wght@400;500;700&display=swap');
 
-        body {
-            font-family: 'Roboto', sans-serif;
-            background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 100%);
-            color: var(--text);
-            padding: 15px;
-            padding-bottom: 60px;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+:root {
+    --bg:#0d0d0d; --card:#1a1a1a; --accent:#ff4d00;
+    --gold:#ffd700; --text:#fff; --text-dim:#999;
+    --border:#333; --success:#00ff88; --danger:#ff3366;
+}
 
-        /* Animated Glowing Header */
-        h1 { 
-            font-family: 'Cinzel', serif; 
-            text-align: center; 
-            background: linear-gradient(135deg, var(--gold) 0%, #ffed4e 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin: 10px 0 20px 0; 
-            font-size: clamp(1.5rem, 5vw, 2.2rem);
-            letter-spacing: 2px;
-            animation: glow 2s ease-in-out infinite alternate;
-        }
+* { box-sizing:border-box; margin:0; padding:0; }
+body {
+    font-family:'Roboto',sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    padding:15px;
+    padding-bottom:60px;
+}
 
-        @keyframes glow {
-            from { filter: drop-shadow(0 0 5px var(--gold-glow)); }
-            to { filter: drop-shadow(0 0 15px var(--gold-glow)); }
-        }
+h1 {
+    font-family:'Cinzel',serif;
+    text-align:center;
+    color:var(--gold);
+    margin:20px 0;
+    letter-spacing:2px;
+}
 
-        .container { max-width: 900px; margin: 0 auto; animation: fadeIn 0.5s ease-out; }
+.container { max-width:900px; margin:auto; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+.panel {
+    background:var(--card);
+    border-radius:16px;
+    padding:20px;
+    margin-bottom:15px;
+    border:1px solid var(--border);
+}
 
-        .panel {
-            background: var(--card);
-            border-radius: 16px;
-            padding: clamp(12px, 3vw, 20px);
-            margin-bottom: 15px;
-            border: 1px solid var(--border);
-            box-shadow: 0 4px 20px var(--shadow);
-            backdrop-filter: blur(10px);
-        }
+.mode-switch { display:flex; gap:12px; margin-bottom:20px; }
+.mode-btn {
+    flex:1; padding:14px;
+    background:var(--card);
+    border:2px solid var(--border);
+    border-radius:12px;
+    font-weight:700;
+    color:var(--text-dim);
+    cursor:pointer;
+}
+.mode-btn.active {
+    background:var(--accent);
+    color:#fff;
+    border-color:var(--accent);
+}
 
-        /* Mode Toggle with Glowing Effect */
-        .mode-switch { display: flex; gap: 12px; margin-bottom: 20px; }
+.stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.stat-box {
+    background:#252525;
+    padding:15px;
+    border-radius:12px;
+    border:1px solid #444;
+    text-align:center;
+}
+.stat-val { font-size:1.8rem; font-weight:700; color:var(--accent); }
+.stat-lbl { font-size:.7rem; text-transform:uppercase; color:var(--text-dim); }
 
-        .mode-btn { 
-            flex: 1; padding: 14px 20px; border: 2px solid var(--border); border-radius: 12px; 
-            background: var(--card); color: var(--text-dim); font-weight: 700; cursor: pointer;
-            font-size: clamp(0.85rem, 2.5vw, 1.1rem); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+.selected-list {
+    display:flex;
+    gap:10px;
+    overflow-x:auto;
+    padding:10px 0;
+    min-height:90px;
+}
 
-        .mode-btn.active {
-            background: var(--accent); color: white; border-color: var(--accent);
-            box-shadow: 0 0 15px var(--accent-glow), 0 0 40px var(--accent-glow);
-        }
+.sel-item {
+    min-width:80px;
+    background:#2a2a2a;
+    padding:10px;
+    border-radius:12px;
+    border:2px solid var(--accent);
+    text-align:center;
+    position:relative;
+    cursor:pointer;
+}
 
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 15px; }
+.remove-tag {
+    position:absolute;
+    top:-5px; right:-5px;
+    width:20px; height:20px;
+    border-radius:50%;
+    background:var(--danger);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:12px;
+}
 
-        .stat-box { 
-            background: linear-gradient(135deg, #252525 0%, #1a1a1a 100%);
-            padding: 16px; border-radius: 12px; border: 1px solid #444; text-align: center;
-        }
+.search {
+    width:100%;
+    padding:15px;
+    margin-bottom:15px;
+    background:#1a1a1a;
+    border:2px solid #333;
+    color:#fff;
+    border-radius:12px;
+}
 
-        .stat-val { 
-            display: block; font-size: clamp(1.4rem, 4vw, 1.8rem); font-weight: 700; 
-            background: linear-gradient(135deg, var(--accent) 0%, #ff6a33 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-        }
+.ore-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(90px,1fr));
+    gap:10px;
+}
 
-        .stat-lbl { font-size: 0.75rem; text-transform: uppercase; color: var(--text-dim); letter-spacing: 1px; font-weight: 500; }
+.ore-card {
+    background:#1a1a1a;
+    border:2px solid #333;
+    border-radius:12px;
+    padding:15px 5px;
+    text-align:center;
+    cursor:pointer;
+}
+.ore-card:hover { border-color:var(--accent); }
 
-        #purity-msg { text-align: center; margin-top: 12px; font-size: 0.85rem; padding: 10px; border-radius: 8px; font-weight: 600; }
-        .purity-high { color: var(--success); background: rgba(0, 255, 136, 0.1); border: 1px solid rgba(0, 255, 136, 0.3); }
-        .purity-low { color: var(--danger); background: rgba(255, 51, 102, 0.1); border: 1px solid rgba(255, 51, 102, 0.3); }
-
-        .section-header { font-size: 0.8rem; text-transform: uppercase; color: var(--text-dim); margin-bottom: 12px; font-weight: 700; letter-spacing: 1px; }
-
-        /* Mobile Snap Scrolling Pot */
-        .selected-list { 
-            display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; min-height: 100px; 
-            align-items: center; scroll-behavior: smooth; scroll-snap-type: x mandatory;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .sel-item { 
-            min-width: 90px; max-width: 90px; background: linear-gradient(135deg, #2a2a2a 0%, #1f1f1f 100%);
-            padding: 12px 8px; border-radius: 12px; text-align: center; position: relative; 
-            border: 2px solid var(--accent); scroll-snap-align: start; cursor: pointer;
-            box-shadow: 0 0 10px var(--accent-glow);
-        }
-
-        .remove-tag { position: absolute; top: -8px; right: -8px; background: var(--danger); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: 700; border: 2px solid var(--bg); }
-
-        /* Responsive Grid for Ores */
-        .ore-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(95px, 1fr)); gap: 10px; }
-
-        .ore-card { 
-            background: linear-gradient(135deg, #252525 0%, #1a1a1a 100%);
-            border: 2px solid #333; border-radius: 12px; padding: 14px 8px; text-align: center; cursor: pointer; transition: all 0.3s ease;
-        }
-
-        .ore-card:hover { border-color: var(--accent); transform: translateY(-5px); box-shadow: 0 0 15px var(--accent-glow); }
-
-        .search { width: 100%; padding: 16px 20px; margin-bottom: 20px; background: var(--card); border: 2px solid var(--border); color: var(--text); border-radius: 12px; font-size: 1rem; outline: none; }
-        .search:focus { border-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow); }
-
-        .prob-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #2a2a2a; }
-        .prob-chance { color: var(--gold); font-weight: 700; background: var(--gold-glow); padding: 4px 12px; border-radius: 6px; }
-
-        /* SEO Section with Restored White Bold */
-        .seo-content { line-height: 1.6; color: var(--text-dim); margin-top: 40px; border-top: 1px solid var(--border); padding-top: 30px; }
-        .seo-content h2 { font-family: 'Cinzel', serif; color: var(--gold); margin-bottom: 15px; font-size: 1.5rem; }
-        .seo-content p { margin-bottom: 18px; font-size: 1rem; }
-        .seo-content strong { color: #ffffff; font-weight: 700; }
-
-        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--danger); color: white; padding: 12px 24px; border-radius: 8px; font-weight: 700; z-index: 1000; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-
-        @media (max-width: 480px) {
-            .ore-grid { grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); }
-            .sel-item { min-width: 80px; }
-        }
-    </style>
+.prob-row {
+    display:flex;
+    justify-content:space-between;
+    padding:10px 0;
+    border-bottom:1px solid #222;
+}
+.prob-chance { color:var(--gold); font-weight:700; }
+</style>
 </head>
+
 <body>
-
 <div class="container">
-    <h1>⚔️ THE FORGE CALCULATOR ⚔️</h1>
 
-    <div class="mode-switch">
-        <button id="btn-weapon" class="mode-btn active" onclick="setMode('weapon')">⚔️ WEAPON FORGE</button> 
-        <button id="btn-armor" class="mode-btn" onclick="setMode('armor')">🛡️ ARMOR FORGE</button>
+<h1>⚔️ THE FORGE CALCULATOR ⚔️</h1>
+
+<div class="mode-switch">
+    <button id="btn-weapon" class="mode-btn active">⚔️ WEAPON</button>
+    <button id="btn-armor" class="mode-btn">🛡️ ARMOR</button>
+</div>
+
+<div class="panel">
+    <div class="stats-grid">
+        <div class="stat-box"><div id="avgMult" class="stat-val">0.00x</div><div class="stat-lbl">Avg Mult</div></div>
+        <div class="stat-box"><div id="oreCount" class="stat-val">0</div><div class="stat-lbl">Ores</div></div>
     </div>
+    <div id="purityMsg" style="margin-top:15px"></div>
+</div>
 
-    <div class="panel">
-        <div class="stats-grid">
-            <div class="stat-box">
-                <span class="stat-val" id="display-mult">0.00x</span>
-                <span class="stat-lbl">Avg Multiplier</span>
-            </div>
-            <div class="stat-box">
-                <span class="stat-val" id="display-count">0</span>
-                <span class="stat-lbl">Total Ores</span>
-            </div>
-        </div>
-        <div id="purity-msg"></div>
-    </div>
+<div class="panel">
+    <div style="font-size:.7rem;color:var(--text-dim)">POT CONTENT</div>
+    <div id="selected" class="selected-list"></div>
+</div>
 
-    <div class="panel">
-        <div class="section-header">🔥 Current Forge Pot (Tap to Remove)</div>
-        <div class="selected-list" id="selected-list">
-            <div style="color:#555; font-style:italic; width:100%; text-align:center;">Pot is empty. Select ores below!</div>
-        </div>
-    </div>
+<div class="panel">
+    <div id="probs"></div>
+</div>
 
-    <div class="panel">
-        <div class="section-header">📊 Probabilities Breakdown</div>
-        <div id="prob-container">
-            <div style="color:#666; text-align:center; padding:20px; font-style: italic;">Add 3+ ores to see success rates...</div>
-        </div>
-    </div>
+<input id="search" class="search" placeholder="Search ores...">
+<div id="grid" class="ore-grid"></div>
 
-    <input type="text" class="search" placeholder="🔍 Search ores (e.g., Magma, Galaxite)..." id="search" oninput="renderGrid()">
-    <div class="ore-grid" id="ore-grid"></div>
-
-    <article class="seo-content">
-        <h2>Master the Forge: The Ultimate Roblox Crafting Guide</h2>
-        <p>Welcome to the premier <strong>The Forge Calculator</strong> for Roblox. Whether you are a new blacksmith or an end-game veteran venturing into the Volcanic Depths, understanding the hidden math of ore combinations is the key to success. This tool is designed to help you predict your crafting outcomes with 100% accuracy, ensuring you never waste a rare <strong>Galaxite</strong> or <strong>Darkryte</strong> ore again.</p>
-        
-        <p>In the world of <strong>The Forge</strong>, every ore has a unique multiplier that determines the final stats of your equipment. For example, <strong>Magmaite</strong> and <strong>Fireite</strong> are essential for high-damage offensive builds, while <strong>Obsidian</strong> and <strong>Mythril</strong> provide the defense needed for Abyssal Armor sets. Our calculator uses the latest game metadata to track these multipliers and calculate your <strong>Forge Purity</strong>.</p>
-        
-        <p><strong>Purity is the secret to god-tier items.</strong> If you dilute high-tier ores with basic Stone or Iron, your average multiplier drops, causing your rare traits to weaken. To achieve a <strong>Godslayer</strong> weapon or <strong>Colossal Blade</strong>, you must maintain a high purity ratio. Simply add your ores to the pot above, and the calculator will provide a live probability breakdown based on the quantity and quality of your materials.</p>
-        
-        <p>Our mobile-friendly interface allows you to plan your builds on the go. Switch between <strong>Weapon Forge</strong> and <strong>Armor Forge</strong> modes to see exactly how many ores you need to reach the next tier. Don't leave your hard-earned loot to chance—use the calculator to optimize your strategy and become the legendary smith of the realm!</p>
-    </article>
 </div>
 
 <script>
-    const ORES = [
-        { name: 'Stone', mult: 0.2, icon: '🪨' }, { name: 'Iron', mult: 0.35, icon: '⚙️' },
-        { name: 'Silver', mult: 0.5, icon: '⚪' }, { name: 'Gold', mult: 0.65, icon: '🟡' },
-        { name: 'Cobalt', mult: 1.0, icon: '🔵' }, { name: 'Titanium', mult: 1.15, icon: '🛡️' },
-        { name: 'Diamond', mult: 2.0, icon: '💎' }, { name: 'Obsidian', mult: 2.35, icon: '⬛' },
-        { name: 'Ruby', mult: 2.95, icon: '❤️' }, { name: 'Rivalite', mult: 3.33, icon: '⚡' },
-        { name: 'Mythril', mult: 3.5, icon: '✨' }, { name: 'Fireite', mult: 4.5, icon: '🔥' },
-        { name: 'Magmaite', mult: 5.0, icon: '🌋' }, { name: 'Demonite', mult: 5.5, icon: '😈' },
-        { name: 'Darkryte', mult: 6.3, icon: '🌑' }, { name: 'Galaxite', mult: 11.5, icon: '🌌' }
-    ];
+// ---------------- DATA ----------------
+const ORES = [
+ {name:'Stone',mult:0.2,icon:'🪨'}, {name:'Sandstone',mult:0.25,icon:'⏳'},
+ {name:'Copper',mult:0.3,icon:'🟠'}, {name:'Iron',mult:0.35,icon:'⚙️'},
+ {name:'Tin',mult:0.425,icon:'🥫'}, {name:'Silver',mult:0.5,icon:'⚪'},
+ {name:'Gold',mult:0.65,icon:'🟡'}, {name:'Cardboardite',mult:0.7,icon:'📦'},
+ {name:'Cobalt',mult:1.0,icon:'🔵'}, {name:'Titanium',mult:1.15,icon:'🛡️'},
+ {name:'Diamond',mult:2.0,icon:'💎'}, {name:'Obsidian',mult:2.35,icon:'⬛'},
+ {name:'Cuprite',mult:2.43,icon:'🧱'}, {name:'Ruby',mult:2.95,icon:'❤️'},
+ {name:'Rivalite',mult:3.33,icon:'⚡'}, {name:'Mythril',mult:3.5,icon:'✨'},
+ {name:'Fireite',mult:4.5,icon:'🔥'}, {name:'Magmaite',mult:5.0,icon:'🌋'},
+ {name:'Demonite',mult:5.5,icon:'😈'}, {name:'Darkryte',mult:6.3,icon:'🌑'},
+ {name:'Rainbow Crystal',mult:5.25,icon:'🌈'}, {name:'Arcane Crystal',mult:7.5,icon:'🔮'}
+];
 
-    const WEAPON_PROBS = {
-        0: { 'Scrap Metal': 100 }, 3: { 'Dagger': 70, 'Gauntlet': 30 },
-        8: { 'Katana': 50, 'Longsword': 50 }, 15: { 'Greatsword': 60, 'Colossal Blade': 40 },
-        25: { 'Godslayer': 20, 'Colossal Blade': 80 }
-    };
+const ORE_MAP = Object.fromEntries(ORES.map(o => [o.name,o]));
 
-    const ARMOR_PROBS = {
-        0: { 'Cloth Scraps': 100 }, 5: { 'Light Set': 100 },
-        12: { 'Medium Set': 70, 'Light Set': 30 }, 22: { 'Heavy Set': 80, 'Medium Set': 20 },
-        40: { 'Abyssal Armor': 30, 'Heavy Set': 70 }
-    };
+const WEAPON_PROBS = {
+ 0:{Scrap:100},
+ 3:{Dagger:70,Gauntlet:30},
+ 8:{Katana:50,Longsword:50},
+ 15:{Greatsword:60,'Colossal Blade':40},
+ 25:{Godslayer:20,'Colossal Blade':80}
+};
 
-    let pot = {};
-    let mode = 'weapon';
-    let animationTimers = {};
+const ARMOR_PROBS = {
+ 0:{Cloth:100},
+ 5:{'Light Set':100},
+ 12:{'Medium Set':70},
+ 22:{'Heavy Set':80},
+ 40:{'Abyssal Armor':30}
+};
 
-    function showToast(message) {
-        const existing = document.querySelector('.toast');
-        if (existing) existing.remove();
-        const toast = document.createElement('div');
-        toast.className = 'toast';
-        toast.textContent = message;
-        document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 2500);
-    }
+// ---------------- STATE ----------------
+let pot = {};
+let mode = 'weapon';
 
-    function setMode(newMode) {
-        mode = newMode;
-        document.getElementById('btn-weapon').classList.toggle('active', mode === 'weapon');
-        document.getElementById('btn-armor').classList.toggle('active', mode === 'armor');
-        update();
-    }
+// ---------------- LOGIC ----------------
+function setMode(m){
+ mode=m;
+ document.getElementById('btn-weapon').classList.toggle('active',m==='weapon');
+ document.getElementById('btn-armor').classList.toggle('active',m==='armor');
+ update();
+}
 
-    function addOre(name) {
-        const typeCount = Object.keys(pot).length;
-        if (!pot[name] && typeCount >= 6) return showToast('⚠️ Maximum 6 ore types!');
-        pot[name] = (pot[name] || 0) + 1;
-        update();
-    }
+function addOre(name){
+ if(!pot[name] && Object.keys(pot).length>=6) return;
+ pot[name]=(pot[name]||0)+1;
+ update();
+}
 
-    function removeOre(name) {
-        if (pot[name] > 1) pot[name]--;
-        else delete pot[name];
-        update();
-    }
+function removeOre(name){
+ if(pot[name]>1) pot[name]--;
+ else delete pot[name];
+ update();
+}
 
-    function update() {
-        const total = Object.values(pot).reduce((a, b) => a + b, 0);
-        let weightedSum = 0, maxMult = 0;
+function update(){
+ const total=Object.values(pot).reduce((a,b)=>a+b,0);
+ let sum=0, max=0;
 
-        Object.keys(pot).forEach(n => {
-            const ore = ORES.find(o => o.name === n);
-            weightedSum += (ore.mult * pot[n]);
-            if (ore.mult > maxMult) maxMult = ore.mult;
-        });
+ for(const n in pot){
+   const o=ORE_MAP[n];
+   sum+=o.mult*pot[n];
+   if(o.mult>max) max=o.mult;
+ }
 
-        const avgMult = total > 0 ? (weightedSum / total) : 0;
-        animateValue('display-mult', avgMult, 'x', 2);
-        animateValue('display-count', total, '', 0);
+ const avg=total?+(sum/total).toFixed(3):0;
+ document.getElementById('avgMult').textContent=avg.toFixed(2)+'x';
+ document.getElementById('oreCount').textContent=total;
 
-        const purity = maxMult > 0 ? (avgMult / maxMult) : 1;
-        const purityMsg = document.getElementById('purity-msg');
-        if (total > 5 && purity < 0.6) {
-            purityMsg.innerHTML = '<div class="purity-low">⚠️ Low Purity Warning! Your stats will be diluted.</div>';
-        } else if (total > 0) {
-            purityMsg.innerHTML = '<div class="purity-high">✅ High Purity Forge - Excellent!</div>';
-        } else { purityMsg.innerHTML = ''; }
+ const purity=document.getElementById('purityMsg');
+ if(!total){ purity.innerHTML=''; }
+ else{
+   const ratio=Math.min(1,avg/max);
+   purity.innerHTML=
+     ratio>=0.85?`<div style="color:var(--success)">💎 PURITY ${(ratio*100).toFixed(0)}%</div>`:
+     ratio>=0.5?`<div style="color:var(--gold)">⚠️ PURITY ${(ratio*100).toFixed(0)}%</div>`:
+     `<div style="color:var(--danger)">❌ POOR PURITY</div>`;
+ }
 
-        renderSelected();
-        renderProbs(total);
-    }
+ renderSelected();
+ renderProbs(total);
+}
 
-    function animateValue(elementId, targetValue, suffix = '', decimals = 0) {
-        const element = document.getElementById(elementId);
-        if (animationTimers[elementId]) clearInterval(animationTimers[elementId]);
-        const currentText = element.textContent.replace(/[^\d.]/g, '') || "0";
-        const currentValue = parseFloat(currentText);
-        const difference = targetValue - currentValue;
-        if (difference === 0) return;
-        const duration = 300, steps = 15, increment = difference / steps;
-        let step = 0;
-        animationTimers[elementId] = setInterval(() => {
-            step++;
-            const newValue = currentValue + (increment * step);
-            element.textContent = newValue.toFixed(decimals) + suffix;
-            if (step >= steps) {
-                element.textContent = targetValue.toFixed(decimals) + suffix;
-                clearInterval(animationTimers[elementId]);
-                delete animationTimers[elementId];
-            }
-        }, duration / steps);
-    }
+function renderSelected(){
+ const el=document.getElementById('selected');
+ el.innerHTML='';
+ for(const n in pot){
+  const o=ORE_MAP[n];
+  const d=document.createElement('div');
+  d.className='sel-item';
+  d.innerHTML=`<div>${o.icon}</div><div>×${pot[n]}</div><div class="remove-tag">×</div>`;
+  d.onclick=()=>removeOre(n);
+  el.appendChild(d);
+ }
+}
 
-    function renderSelected() {
-        const list = document.getElementById('selected-list');
-        list.innerHTML = '';
-        if (Object.keys(pot).length === 0) {
-            list.innerHTML = '<div style="color:#555;font-style:italic;width:100%;text-align:center">Pot is empty. Select ores below!</div>';
-            return;
-        }
-        Object.keys(pot).forEach(name => {
-            const ore = ORES.find(o => o.name === name);
-            const div = document.createElement('div');
-            div.className = 'sel-item';
-            div.onclick = () => removeOre(name);
-            div.innerHTML = `<div class="sel-icon">${ore.icon}</div><div class="sel-count">×${pot[name]}</div><div class="remove-tag">×</div>`;
-            list.appendChild(div);
-        });
-    }
+function renderProbs(total){
+ const tbl=mode==='weapon'?WEAPON_PROBS:ARMOR_PROBS;
+ const keys=Object.keys(tbl).map(Number).sort((a,b)=>b-a);
+ const k=keys.find(v=>total>=v) ?? keys[keys.length-1];
+ const items=tbl[k];
+ const c=document.getElementById('probs');
+ c.innerHTML=`<div style="font-size:.7rem;color:var(--text-dim)">SUCCESS (${total} ores)</div>`;
+ for(const i in items){
+   c.innerHTML+=`<div class="prob-row"><span>${i}</span><span class="prob-chance">${items[i]}%</span></div>`;
+ }
+}
 
-    function renderProbs(totalCount) {
-        const container = document.getElementById('prob-container');
-        if (totalCount < 3) {
-            container.innerHTML = '<div style="color:#666;text-align:center;padding:20px;font-style:italic;">Add 3+ ores to see success rates...</div>';
-            return;
-        }
-        const table = mode === 'weapon' ? WEAPON_PROBS : ARMOR_PROBS;
-        const thresholds = Object.keys(table).map(Number).sort((a,b) => b-a);
-        const activeKey = thresholds.find(t => totalCount >= t);
-        const items = table[activeKey];
-        container.innerHTML = '';
-        Object.entries(items).forEach(([name, chance]) => {
-            const row = document.createElement('div');
-            row.className = 'prob-row';
-            row.innerHTML = `<span>${name}</span><span class="prob-chance">${chance}%</span>`;
-            container.appendChild(row);
-        });
-    }
+function renderGrid(){
+ const q=document.getElementById('search').value.toLowerCase();
+ const g=document.getElementById('grid');
+ g.innerHTML='';
+ ORES.filter(o=>o.name.toLowerCase().includes(q)).forEach(o=>{
+  const d=document.createElement('div');
+  d.className='ore-card';
+  d.onclick=()=>addOre(o.name);
+  d.innerHTML=`<div style="font-size:1.5rem">${o.icon}</div><div>${o.name}</div><div style="color:var(--gold)">${o.mult}x</div>`;
+  g.appendChild(d);
+ });
+}
 
-    function renderGrid() {
-        const grid = document.getElementById('ore-grid');
-        const query = document.getElementById('search').value.toLowerCase();
-        grid.innerHTML = '';
-        const filtered = ORES.filter(o => o.name.toLowerCase().includes(query));
-        filtered.forEach(ore => {
-            const card = document.createElement('div');
-            card.className = 'ore-card';
-            card.onclick = () => addOre(ore.name);
-            card.innerHTML = `<div style="font-size:2rem">${ore.icon}</div><div>${ore.name}</div><div style="color:var(--gold)">${ore.mult}×</div>`;
-            grid.appendChild(card);
-        });
-    }
+// ---------------- INIT ----------------
+document.getElementById('btn-weapon').onclick=()=>setMode('weapon');
+document.getElementById('btn-armor').onclick=()=>setMode('armor');
+document.getElementById('search').oninput=renderGrid;
 
-    renderGrid();
-    let lastTouchEnd = 0;
-    document.addEventListener('touchend', (e) => {
-        const now = Date.now();
-        if (now - lastTouchEnd <= 300) e.preventDefault();
-        lastTouchEnd = now;
-    }, false);
+renderGrid();
 </script>
-
 </body>
 </html>
