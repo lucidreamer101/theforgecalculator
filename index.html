@@ -11,41 +11,21 @@
   gtag('config', 'G-LNMSGNS8XN');
 </script>
 
-<!-- Copyright Protection -->
+<!-- Lightweight Copyright Protection -->
 <script>
-// Disable right-click
+// Disable right-click (can still be bypassed but deters casual users)
 document.addEventListener('contextmenu', e => e.preventDefault());
 
-// Disable F12, Ctrl+Shift+I, Ctrl+U
+// Disable common keyboard shortcuts (optional - can be removed if annoying)
 document.addEventListener('keydown', e => {
   if(e.keyCode === 123 || // F12
      (e.ctrlKey && e.shiftKey && e.keyCode === 73) || // Ctrl+Shift+I
-     (e.ctrlKey && e.shiftKey && e.keyCode === 74) || // Ctrl+Shift+J
      (e.ctrlKey && e.keyCode === 85)) { // Ctrl+U
     e.preventDefault();
-    return false;
   }
 });
 
-// Detect DevTools
-(function() {
-  const devtools = /./;
-  devtools.toString = function() {
-    this.opened = true;
-  };
-  setInterval(() => {
-    console.log('%c', devtools);
-    if(devtools.opened) {
-      alert('⚠️ Developer tools detected. This calculator is copyrighted.');
-      devtools.opened = false;
-    }
-  }, 1000);
-})();
-
-// Disable text selection
-document.addEventListener('selectstart', e => e.preventDefault());
-
-// Add copyright watermark to console
+// Add copyright watermark to console (doesn't interfere with usage)
 console.log('%c⚔️ THE FORGE CALCULATOR', 'font-size:20px;font-weight:bold;color:#ff4d00;');
 console.log('%c© 2025 - All Rights Reserved', 'font-size:12px;color:#666;');
 console.log('%cUnauthorized copying is prohibited.', 'font-size:12px;color:red;font-weight:bold;');
@@ -70,7 +50,7 @@ console.log('%cUnauthorized copying is prohibited.', 'font-size:12px;color:red;f
 }
 
 /* BASE */
-* { box-sizing:border-box; margin:0; padding:0; user-select:none; -webkit-user-select:none; -moz-user-select:none; }
+* { box-sizing:border-box; margin:0; padding:0; }
 body {
   font-family:'Roboto',sans-serif;
   background:var(--bg);
@@ -437,7 +417,7 @@ By selecting different ores (maximum 4 types as per game rules), the calculator 
 
 </div>
 
-<div class="copyright-watermark">© 2025 ForgeCalc • Protected</div>
+<div class="copyright-watermark">© 2025 ForgeCalc</div>
 
 <script>
 /* DOM */
