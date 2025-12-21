@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>The Forge Calculator Pro</title>
+
+<title>The Forge Calculator Pro – Roblox Crafting & Ore Guide</title>
+
+<meta name="description" content="The Forge Calculator is a Roblox crafting helper for estimating forge multipliers, purity, ore combinations, and success chances for weapons and armor in The Forge.">
 
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚔️</text></svg>">
 
@@ -11,293 +14,327 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Roboto:wght@400;500;700&display=swap');
 
 :root {
-    --bg:#0d0d0d; --card:#1a1a1a; --accent:#ff4d00;
-    --gold:#ffd700; --text:#fff; --text-dim:#999;
-    --border:#333; --success:#00ff88; --danger:#ff3366;
+  --bg:#0d0d0d; --card:#1a1a1a; --accent:#ff4d00;
+  --gold:#ffd700; --text:#fff; --text-dim:#999;
+  --border:#333; --success:#00ff88; --danger:#ff3366;
 }
 
+/* BASE */
 * { box-sizing:border-box; margin:0; padding:0; }
 body {
-    font-family:'Roboto',sans-serif;
-    background:var(--bg);
-    color:var(--text);
-    padding:15px;
-    padding-bottom:60px;
+  font-family:'Roboto',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  padding:15px;
+  padding-bottom:80px;
+  overflow-x:hidden;
 }
 
 h1 {
-    font-family:'Cinzel',serif;
-    text-align:center;
-    color:var(--gold);
-    margin:20px 0;
-    letter-spacing:2px;
+  font-family:'Cinzel',serif;
+  text-align:center;
+  color:var(--gold);
+  margin:20px 0;
 }
 
-.container { max-width:900px; margin:auto; }
+.container { max-width:900px; margin:auto; position:relative; z-index:1; }
 
 .panel {
-    background:var(--card);
-    border-radius:16px;
-    padding:20px;
-    margin-bottom:15px;
-    border:1px solid var(--border);
+  background:var(--card);
+  border-radius:16px;
+  padding:20px;
+  margin-bottom:15px;
+  border:1px solid var(--border);
 }
 
+/* MODE SWITCH */
 .mode-switch { display:flex; gap:12px; margin-bottom:20px; }
 .mode-btn {
-    flex:1; padding:14px;
-    background:var(--card);
-    border:2px solid var(--border);
-    border-radius:12px;
-    font-weight:700;
-    color:var(--text-dim);
-    cursor:pointer;
+  flex:1; padding:14px;
+  background:var(--card);
+  border:2px solid var(--border);
+  border-radius:12px;
+  font-weight:700;
+  color:var(--text-dim);
+  cursor:pointer;
 }
 .mode-btn.active {
-    background:var(--accent);
-    color:#fff;
-    border-color:var(--accent);
+  background:var(--accent);
+  color:#fff;
+  border-color:var(--accent);
 }
 
+/* STATS */
 .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 .stat-box {
-    background:#252525;
-    padding:15px;
-    border-radius:12px;
-    border:1px solid #444;
-    text-align:center;
+  background:#252525;
+  padding:15px;
+  border-radius:12px;
+  border:1px solid #444;
+  text-align:center;
 }
 .stat-val { font-size:1.8rem; font-weight:700; color:var(--accent); }
 .stat-lbl { font-size:.7rem; text-transform:uppercase; color:var(--text-dim); }
 
+/* SELECTED */
 .selected-list {
-    display:flex;
-    gap:10px;
-    overflow-x:auto;
-    padding:10px 0;
-    min-height:90px;
+  display:flex;
+  gap:10px;
+  overflow-x:auto;
+  padding:10px 0;
+  min-height:90px;
 }
 
 .sel-item {
-    min-width:80px;
-    background:#2a2a2a;
-    padding:10px;
-    border-radius:12px;
-    border:2px solid var(--accent);
-    text-align:center;
-    position:relative;
-    cursor:pointer;
+  min-width:80px;
+  background:#2a2a2a;
+  padding:10px;
+  border-radius:12px;
+  border:2px solid var(--accent);
+  text-align:center;
+  position:relative;
+  cursor:pointer;
 }
 
 .remove-tag {
-    position:absolute;
-    top:-5px; right:-5px;
-    width:20px; height:20px;
-    border-radius:50%;
-    background:var(--danger);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:12px;
+  position:absolute;
+  top:-5px; right:-5px;
+  width:20px; height:20px;
+  border-radius:50%;
+  background:var(--danger);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:12px;
 }
 
+/* SEARCH */
 .search {
-    width:100%;
-    padding:15px;
-    margin-bottom:15px;
-    background:#1a1a1a;
-    border:2px solid #333;
-    color:#fff;
-    border-radius:12px;
+  width:100%;
+  padding:15px;
+  margin-bottom:15px;
+  background:#1a1a1a;
+  border:2px solid #333;
+  color:#fff;
+  border-radius:12px;
 }
 
+/* GRID */
 .ore-grid {
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(90px,1fr));
-    gap:10px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(90px,1fr));
+  gap:10px;
 }
 
 .ore-card {
-    background:#1a1a1a;
-    border:2px solid #333;
-    border-radius:12px;
-    padding:15px 5px;
-    text-align:center;
-    cursor:pointer;
+  background:#1a1a1a;
+  border:2px solid #333;
+  border-radius:12px;
+  padding:15px 6px;
+  text-align:center;
+  cursor:pointer;
 }
 .ore-card:hover { border-color:var(--accent); }
 
+.ore-name {
+  font-size:0.75rem;
+  line-height:1.1;
+  word-break:break-word;
+}
+
+/* PROBS */
 .prob-row {
-    display:flex;
-    justify-content:space-between;
-    padding:10px 0;
-    border-bottom:1px solid #222;
+  display:flex;
+  justify-content:space-between;
+  padding:10px 0;
+  border-bottom:1px solid #222;
 }
 .prob-chance { color:var(--gold); font-weight:700; }
+
+/* BOTTOM INFO (NEW) */
+.info-section {
+  margin-top:40px;
+  background:linear-gradient(180deg,#1a1a1a,#141414);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:30px;
+}
+
+.info-section h2 {
+  font-family:'Cinzel',serif;
+  color:var(--gold);
+  text-align:center;
+  margin-bottom:20px;
+  font-size:1.3rem;
+}
+
+.info-section p {
+  color:var(--text-dim);
+  font-size:0.9rem;
+  line-height:1.6;
+  margin-bottom:15px;
+}
+
+/* SNOW */
+.snow {
+  position:fixed;
+  top:-10px;
+  pointer-events:none;
+  opacity:0.6;
+  animation: fall linear infinite;
+  z-index:0;
+}
+@keyframes fall { to { transform: translateY(110vh); } }
 </style>
 </head>
 
 <body>
+
+<div id="snow-layer"></div>
+
 <div class="container">
 
 <h1>⚔️ THE FORGE CALCULATOR ⚔️</h1>
 
 <div class="mode-switch">
-    <button id="btn-weapon" class="mode-btn active">⚔️ WEAPON</button>
-    <button id="btn-armor" class="mode-btn">🛡️ ARMOR</button>
+  <button id="btn-weapon" class="mode-btn active">⚔️ WEAPON</button>
+  <button id="btn-armor" class="mode-btn">🛡️ ARMOR</button>
 </div>
 
 <div class="panel">
-    <div class="stats-grid">
-        <div class="stat-box"><div id="avgMult" class="stat-val">0.00x</div><div class="stat-lbl">Avg Mult</div></div>
-        <div class="stat-box"><div id="oreCount" class="stat-val">0</div><div class="stat-lbl">Ores</div></div>
-    </div>
-    <div id="purityMsg" style="margin-top:15px"></div>
+  <div class="stats-grid">
+    <div class="stat-box"><div id="avgMult" class="stat-val">0.00x</div><div class="stat-lbl">Avg Mult</div></div>
+    <div class="stat-box"><div id="oreCount" class="stat-val">0</div><div class="stat-lbl">Ores</div></div>
+  </div>
+  <div id="purityMsg" style="margin-top:15px"></div>
 </div>
 
 <div class="panel">
-    <div style="font-size:.7rem;color:var(--text-dim)">POT CONTENT</div>
-    <div id="selected" class="selected-list"></div>
+  <div style="font-size:.7rem;color:var(--text-dim)">POT CONTENT</div>
+  <div id="selected" class="selected-list"></div>
 </div>
 
-<div class="panel">
-    <div id="probs"></div>
-</div>
+<div class="panel"><div id="probs"></div></div>
 
 <input id="search" class="search" placeholder="Search ores...">
 <div id="grid" class="ore-grid"></div>
 
+<!-- 🔽 NEW BOTTOM INFO SECTION 🔽 -->
+<div class="info-section">
+<h2>About The Forge Calculator</h2>
+
+<p>
+The Forge Calculator is a community-built crafting helper designed for players of the Roblox game <em>The Forge</em>. Forging systems in The Forge reward efficient planning, but experimenting with ore combinations in-game can be costly. This tool allows players to preview forge efficiency before committing valuable materials.
+</p>
+
+<p>
+By selecting different ores, the calculator estimates your average multiplier and forge purity. High-tier ores generally improve forge effectiveness, while mixing low-value materials can dilute results. The purity indicator highlights whether your ore mix is focused, acceptable, or inefficient, helping players avoid wasteful forge attempts.
+</p>
+
+<p>
+The success probability display reflects commonly observed forge thresholds in The Forge. As more ores are added, higher-tier crafting outcomes become available. While Roblox does not publicly document exact forge formulas, these estimates are based on community testing and typical gameplay behavior.
+</p>
+
+<p>
+This calculator does not exploit or modify Roblox gameplay. It is an educational simulator intended to reduce guesswork, improve consistency, and help players better understand forge mechanics. Ore availability, multipliers, and results may change with future game updates.
+</p>
+</div>
+
 </div>
 
 <script>
-// ---------------- DATA ----------------
-const ORES = [
- {name:'Stone',mult:0.2,icon:'🪨'}, {name:'Sandstone',mult:0.25,icon:'⏳'},
- {name:'Copper',mult:0.3,icon:'🟠'}, {name:'Iron',mult:0.35,icon:'⚙️'},
- {name:'Tin',mult:0.425,icon:'🥫'}, {name:'Silver',mult:0.5,icon:'⚪'},
- {name:'Gold',mult:0.65,icon:'🟡'}, {name:'Cardboardite',mult:0.7,icon:'📦'},
- {name:'Cobalt',mult:1.0,icon:'🔵'}, {name:'Titanium',mult:1.15,icon:'🛡️'},
- {name:'Diamond',mult:2.0,icon:'💎'}, {name:'Obsidian',mult:2.35,icon:'⬛'},
- {name:'Cuprite',mult:2.43,icon:'🧱'}, {name:'Ruby',mult:2.95,icon:'❤️'},
- {name:'Rivalite',mult:3.33,icon:'⚡'}, {name:'Mythril',mult:3.5,icon:'✨'},
- {name:'Fireite',mult:4.5,icon:'🔥'}, {name:'Magmaite',mult:5.0,icon:'🌋'},
- {name:'Demonite',mult:5.5,icon:'😈'}, {name:'Darkryte',mult:6.3,icon:'🌑'},
- {name:'Rainbow Crystal',mult:5.25,icon:'🌈'}, {name:'Arcane Crystal',mult:7.5,icon:'🔮'}
+/* DOM */
+const btnWeapon=document.getElementById('btn-weapon');
+const btnArmor=document.getElementById('btn-armor');
+const avgMultEl=document.getElementById('avgMult');
+const oreCountEl=document.getElementById('oreCount');
+const purityMsg=document.getElementById('purityMsg');
+const selectedEl=document.getElementById('selected');
+const probsEl=document.getElementById('probs');
+const gridEl=document.getElementById('grid');
+const searchEl=document.getElementById('search');
+
+/* SNOW */
+const snowLayer=document.getElementById('snow-layer');
+const snowCount=window.innerWidth<600?18:30;
+for(let i=0;i<snowCount;i++){
+ const s=document.createElement('div');
+ s.className='snow';
+ s.textContent='❄';
+ s.style.left=Math.random()*100+'vw';
+ s.style.fontSize=(8+Math.random()*8)+'px';
+ s.style.animationDuration=(6+Math.random()*6)+'s';
+ s.style.animationDelay=(-Math.random()*10)+'s';
+ snowLayer.appendChild(s);
+}
+
+/* DATA */
+const ORES=[
+{name:'Stone',mult:0.2,icon:'🪨'},{name:'Sandstone',mult:0.25,icon:'⏳'},
+{name:'Copper',mult:0.3,icon:'🟠'},{name:'Iron',mult:0.35,icon:'⚙️'},
+{name:'Tin',mult:0.425,icon:'🥫'},{name:'Silver',mult:0.5,icon:'⚪'},
+{name:'Gold',mult:0.65,icon:'🟡'},{name:'Cardboardite',mult:0.7,icon:'📦'},
+{name:'Cobalt',mult:1.0,icon:'🔵'},{name:'Titanium',mult:1.15,icon:'🛡️'},
+{name:'Diamond',mult:2.0,icon:'💎'},{name:'Obsidian',mult:2.35,icon:'⬛'},
+{name:'Cuprite',mult:2.43,icon:'🧱'},{name:'Ruby',mult:2.95,icon:'❤️'},
+{name:'Rivalite',mult:3.33,icon:'⚡'},{name:'Mythril',mult:3.5,icon:'✨'},
+{name:'Fireite',mult:4.5,icon:'🔥'},{name:'Magmaite',mult:5.0,icon:'🌋'},
+{name:'Demonite',mult:5.5,icon:'😈'},{name:'Darkryte',mult:6.3,icon:'🌑'},
+{name:'Rainbow Crystal',mult:5.25,icon:'🌈'},{name:'Arcane Crystal',mult:7.5,icon:'🔮'}
 ];
 
-const ORE_MAP = Object.fromEntries(ORES.map(o => [o.name,o]));
+const ORE_MAP=Object.fromEntries(ORES.map(o=>[o.name,o]));
+const WEAPON_PROBS={0:{Scrap:100},3:{Dagger:70,Gauntlet:30},8:{Katana:50,Longsword:50},15:{Greatsword:60,'Colossal Blade':40},25:{Godslayer:20,'Colossal Blade':80}};
+const ARMOR_PROBS={0:{Cloth:100},5:{'Light Set':100},12:{'Medium Set':70},22:{'Heavy Set':80},40:{'Abyssal Armor':30}};
 
-const WEAPON_PROBS = {
- 0:{Scrap:100},
- 3:{Dagger:70,Gauntlet:30},
- 8:{Katana:50,Longsword:50},
- 15:{Greatsword:60,'Colossal Blade':40},
- 25:{Godslayer:20,'Colossal Blade':80}
-};
+let pot={},mode='weapon';
 
-const ARMOR_PROBS = {
- 0:{Cloth:100},
- 5:{'Light Set':100},
- 12:{'Medium Set':70},
- 22:{'Heavy Set':80},
- 40:{'Abyssal Armor':30}
-};
-
-// ---------------- STATE ----------------
-let pot = {};
-let mode = 'weapon';
-
-// ---------------- LOGIC ----------------
 function setMode(m){
  mode=m;
- document.getElementById('btn-weapon').classList.toggle('active',m==='weapon');
- document.getElementById('btn-armor').classList.toggle('active',m==='armor');
+ btnWeapon.classList.toggle('active',m==='weapon');
+ btnArmor.classList.toggle('active',m==='armor');
  update();
 }
-
-function addOre(name){
- if(!pot[name] && Object.keys(pot).length>=6) return;
- pot[name]=(pot[name]||0)+1;
- update();
-}
-
-function removeOre(name){
- if(pot[name]>1) pot[name]--;
- else delete pot[name];
- update();
-}
+function addOre(n){if(!pot[n]&&Object.keys(pot).length>=6)return;pot[n]=(pot[n]||0)+1;update();}
+function removeOre(n){pot[n]>1?pot[n]--:delete pot[n];update();}
 
 function update(){
  const total=Object.values(pot).reduce((a,b)=>a+b,0);
- let sum=0, max=0;
-
- for(const n in pot){
-   const o=ORE_MAP[n];
-   sum+=o.mult*pot[n];
-   if(o.mult>max) max=o.mult;
- }
-
- const avg=total?+(sum/total).toFixed(3):0;
- document.getElementById('avgMult').textContent=avg.toFixed(2)+'x';
- document.getElementById('oreCount').textContent=total;
-
- const purity=document.getElementById('purityMsg');
- if(!total){ purity.innerHTML=''; }
- else{
-   const ratio=Math.min(1,avg/max);
-   purity.innerHTML=
-     ratio>=0.85?`<div style="color:var(--success)">💎 PURITY ${(ratio*100).toFixed(0)}%</div>`:
-     ratio>=0.5?`<div style="color:var(--gold)">⚠️ PURITY ${(ratio*100).toFixed(0)}%</div>`:
-     `<div style="color:var(--danger)">❌ POOR PURITY</div>`;
- }
-
- renderSelected();
- renderProbs(total);
+ let sum=0,max=0;
+ for(const n in pot){const o=ORE_MAP[n];sum+=o.mult*pot[n];max=Math.max(max,o.mult);}
+ const avg=total?sum/total:0;
+ avgMultEl.textContent=avg.toFixed(2)+'x';
+ oreCountEl.textContent=total;
+ purityMsg.innerHTML=!total?'':(avg/max>=0.85?'💎 High Purity':avg/max>=0.5?'⚠️ Diluted':'❌ Poor Purity');
+ renderSelected();renderProbs(total);
 }
 
 function renderSelected(){
- const el=document.getElementById('selected');
- el.innerHTML='';
+ selectedEl.innerHTML='';
  for(const n in pot){
   const o=ORE_MAP[n];
-  const d=document.createElement('div');
-  d.className='sel-item';
-  d.innerHTML=`<div>${o.icon}</div><div>×${pot[n]}</div><div class="remove-tag">×</div>`;
-  d.onclick=()=>removeOre(n);
-  el.appendChild(d);
+  selectedEl.innerHTML+=`<div class="sel-item" onclick="removeOre('${n}')"><div>${o.icon}</div><div>×${pot[n]}</div><div class="remove-tag">×</div></div>`;
  }
 }
 
-function renderProbs(total){
+function renderProbs(t){
  const tbl=mode==='weapon'?WEAPON_PROBS:ARMOR_PROBS;
- const keys=Object.keys(tbl).map(Number).sort((a,b)=>b-a);
- const k=keys.find(v=>total>=v) ?? keys[keys.length-1];
- const items=tbl[k];
- const c=document.getElementById('probs');
- c.innerHTML=`<div style="font-size:.7rem;color:var(--text-dim)">SUCCESS (${total} ores)</div>`;
- for(const i in items){
-   c.innerHTML+=`<div class="prob-row"><span>${i}</span><span class="prob-chance">${items[i]}%</span></div>`;
- }
+ const k=Object.keys(tbl).map(Number).sort((a,b)=>b-a).find(v=>t>=v)??0;
+ probsEl.innerHTML=`<div style="font-size:.7rem;color:var(--text-dim)">SUCCESS (${t} ores)</div>`;
+ for(const i in tbl[k])probsEl.innerHTML+=`<div class="prob-row"><span>${i}</span><span class="prob-chance">${tbl[k][i]}%</span></div>`;
 }
 
 function renderGrid(){
- const q=document.getElementById('search').value.toLowerCase();
- const g=document.getElementById('grid');
- g.innerHTML='';
+ const q=searchEl.value.toLowerCase();
+ gridEl.innerHTML='';
  ORES.filter(o=>o.name.toLowerCase().includes(q)).forEach(o=>{
-  const d=document.createElement('div');
-  d.className='ore-card';
-  d.onclick=()=>addOre(o.name);
-  d.innerHTML=`<div style="font-size:1.5rem">${o.icon}</div><div>${o.name}</div><div style="color:var(--gold)">${o.mult}x</div>`;
-  g.appendChild(d);
+  gridEl.innerHTML+=`<div class="ore-card" onclick="addOre('${o.name}')"><div style="font-size:1.5rem">${o.icon}</div><div class="ore-name">${o.name}</div><div style="color:var(--gold);font-size:.7rem">${o.mult}x</div></div>`;
  });
 }
 
-// ---------------- INIT ----------------
-document.getElementById('btn-weapon').onclick=()=>setMode('weapon');
-document.getElementById('btn-armor').onclick=()=>setMode('armor');
-document.getElementById('search').oninput=renderGrid;
-
+btnWeapon.onclick=()=>setMode('weapon');
+btnArmor.onclick=()=>setMode('armor');
+searchEl.oninput=renderGrid;
 renderGrid();
 </script>
 </body>
